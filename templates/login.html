@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Face Recognition Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .login-content {
+            padding: 40px;
+        }
+
+        .login-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .login-section h3 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-control {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: translateY(0);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #6c757d;
+            color: #6c757d;
+            background: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .camera-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .camera-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin: 20px 0;
+            max-width: 100%;
+        }
+
+        #video {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            display: block;
+            border: 3px solid #667eea;
+        }
+
+        #overlayCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .captured-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        #captured {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin: 20px 0;
+            border: 3px solid #10b981;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        #status {
+            margin: 0;
+            color: #475569;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-toggle {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 30px;
+        }
+
+        .similarity-score {
+            background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+            border: 1px solid #29b6f6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #0277bd;
+        }
+
+        @media (max-width: 768px) {
+            .login-content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="bi bi-shield-lock"></i> Secure Face Login</h1>
+            <p>Access your account with advanced facial recognition</p>
+        </div>
+
+        <!-- Login Content -->
+        <div class="login-content">
+            <div class="row">
+                <!-- Login Options -->
+                <div class="col-lg-6">
+                    <div class="login-section">
+                        <h3><i class="bi bi-person-check"></i> Login Options</h3>
+                        
+                        <!-- Email Input (Optional) -->
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email (Optional)</label>
+                            <input type="email" id="email" class="form-control" 
+                                   placeholder="Enter your email for faster recognition">
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> 
+                                Leave empty to scan against all registered faces
+                            </div>
+                        </div>
+
+                        <!-- Face Login Button -->
+                        <button type="button" class="btn btn-primary w-100 mb-3" id="startFaceLoginBtn">
+                            <i class="bi bi-camera"></i> Start Face Recognition Login
+                        </button>
+
+                        <!-- Quick Stats -->
+                        <div id="loginStats" class="mt-4" style="display: none;">
+                            <div class="similarity-score">
+                                <i class="bi bi-graph-up"></i> Recognition Confidence: <span id="confidenceScore">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <div class="login-toggle">
+                        <p class="mb-2">Don't have an account?</p>
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="bi bi-person-plus"></i> Register New Account
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Camera Area -->
+                <div class="col-lg-6">
+                    <!-- Live Camera Feed -->
+                    <div class="camera-section" id="cameraSection">
+                        <h3><i class="bi bi-camera-video"></i> Face Recognition Scanner</h3>
+                        <div class="camera-container">
+                            <video id="video" autoplay muted></video>
+                            <canvas id="overlayCanvas"></canvas>
+                        </div>
+                        <div class="status-card">
+                            <p id="status">
+                                <i class="bi bi-info-circle status-icon"></i>
+                                Click "Start Face Recognition Login" to begin
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Captured Image Section -->
+                    <div class="captured-section" id="capturedSection" style="display: none;">
+                        <h3><i class="bi bi-check-circle text-success"></i> Face Captured</h3>
+                        <img id="captured" />
+                        <div class="status-card">
+                            <p id="capturedStatus">
+                                <i class="bi bi-search status-icon"></i>
+                                Verifying your identity...
+                            </p>
+                        </div>
+                        <div class="control-buttons" id="captureControls">
+                            <button type="button" class="btn btn-warning" id="retryBtn">
+                                <i class="bi bi-arrow-clockwise"></i> Try Again
+                            </button>
+                            <button type="button" class="btn btn-success" id="loginBtn">
+                                <i class="bi bi-check-lg"></i> Verify & Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js/dist/face-api.min.js"></script>
+    <script>
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('overlayCanvas');
+        let ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let statusDiv = document.getElementById('status');
+        let capturedImg = document.getElementById('captured');
+        let startBtn = document.getElementById('startFaceLoginBtn');
+        let retryBtn = document.getElementById('retryBtn');
+        let loginBtn = document.getElementById('loginBtn');
+        let cameraSection = document.getElementById('cameraSection');
+        let capturedSection = document.getElementById('capturedSection');
+        let captureDone = false;
+        let intervalId;
+        let faceDescriptor = null;
+        let capturedImageData = null;
+
+        // Load face-api models
+        async function loadModels() {
+            try {
+                updateStatus('loading', 'Loading AI recognition models...');
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
+                    faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
+                    faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights')
+                ]);
+                console.log("Face recognition models loaded successfully");
+                updateStatus('ready', 'Face recognition ready. Click login to start!');
+            } catch (error) {
+                console.error("Error loading models:", error);
+                updateStatus('error', 'Error loading recognition models. Please refresh.');
+            }
+        }
+
+        function updateStatus(type, message) {
+            const icons = {
+                'loading': '<div class="loading-spinner"></div>',
+                'ready': '<i class="bi bi-check-circle text-success status-icon"></i>',
+                'scanning': '<div class="loading-spinner"></div>',
+                'captured': '<i class="bi bi-camera-fill text-primary status-icon"></i>',
+                'verifying': '<div class="loading-spinner"></div>',
+                'error': '<i class="bi bi-exclamation-triangle text-danger status-icon"></i>',
+                'success': '<i class="bi bi-check-circle-fill text-success status-icon"></i>'
+            };
+
+            statusDiv.innerHTML = `${icons[type] || '<i class="bi bi-info-circle status-icon"></i>'} ${message}`;
+        }
+
+        function resizeCanvas() {
+            canvas.width = video.offsetWidth;
+            canvas.height = video.offsetHeight;
+            canvas.style.width = video.offsetWidth + 'px';
+            canvas.style.height = video.offsetHeight + 'px';
+        }
+
+        // Start face recognition login
+        startBtn.addEventListener('click', async () => {
+            captureDone = false;
+            updateStatus('loading', 'Starting camera for face recognition...');
+            startBtn.innerHTML = '<div class="loading-spinner"></div> Starting Camera...';
+            startBtn.disabled = true;
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }
+                });
+                video.srcObject = stream;
+
+                await new Promise((resolve) => {
+                    video.addEventListener('loadedmetadata', resolve, { once: true });
+                });
+
+                await video.play();
+                
+                setTimeout(() => {
+                    resizeCanvas();
+                    startFaceScanning();
+                }, 500);
+
+            } catch (err) {
+                console.error("Camera error:", err);
+                updateStatus('error', 'Camera access denied or not available!');
+                startBtn.innerHTML = '<i class="bi bi-camera"></i> Start Face Recognition Login';
+                startBtn.disabled = false;
+            }
+        });
+
+        function startFaceScanning() {
+            updateStatus('scanning', 'Position your face in the camera. Scanning...');
+
+            intervalId = setInterval(async () => {
+                if (captureDone) return;
+
+                try {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.5
+                    }))
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
+
+                    if (detections.length === 0) {
+                        updateStatus('scanning', 'No face detected. Please look at the camera.');
+                        return;
+                    }
+
+                    if (detections.length > 1) {
+                        updateStatus('scanning', 'Multiple faces detected. Please ensure only one person is visible.');
+                        return;
+                    }
+
+                    const detection = detections[0];
+                    const score = detection.detection.score || 0;
+                    const percent = Math.round(score * 100);
+
+                    updateStatus('scanning', `Face detected! Quality: ${percent}% - Hold still for capture...`);
+
+                    // Auto-capture when face quality is good
+                    if (percent >= 75 && !captureDone) {
+                        captureDone = true;
+                        faceDescriptor = detection.descriptor;
+                        captureForLogin(percent);
+                    }
+
+                } catch (error) {
+                    console.error("Face scanning error:", error);
+                    updateStatus('error', 'Face scanning error. Please try again.');
+                }
+
+            }, 100);
+        }
+
+        function captureForLogin(confidence) {
+            // Capture the image
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = video.videoWidth;
+            tempCanvas.height = video.videoHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+            capturedImageData = tempCanvas.toDataURL('image/jpeg', 0.9);
+
+            // Display captured image
+            capturedImg.src = capturedImageData;
+
+            // Switch views
+            cameraSection.style.display = 'none';
+            capturedSection.style.display = 'block';
+
+            // Stop camera
+            stopCamera();
+
+            updateStatus('captured', `Face captured with ${confidence}% quality. Review and verify.`);
+        }
+
+        function stopCamera() {
+            if (video.srcObject) {
+                const tracks = video.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Reset start button
+            startBtn.innerHTML = '<i class="bi bi-camera"></i> Start Face Recognition Login';
+            startBtn.disabled = false;
+        }
+
+        // Retry capture button
+        retryBtn.addEventListener('click', () => {
+            // Reset to camera view
+            capturedSection.style.display = 'none';
+            cameraSection.style.display = 'block';
+
+            // Reset variables
+            captureDone = false;
+            faceDescriptor = null;
+            capturedImageData = null;
+
+            // Hide login stats
+            document.getElementById('loginStats').style.display = 'none';
+
+            updateStatus('ready', 'Ready to capture face again. Click start to begin.');
+        });
+
+        // Login verification button
+        loginBtn.addEventListener('click', async () => {
+            if (!faceDescriptor || !capturedImageData) {
+                showNotification('❌ Please capture your face first.', 'error');
+                return;
+            }
+
+            // Update UI to show verification in progress
+            loginBtn.innerHTML = '<div class="loading-spinner"></div> Verifying...';
+            loginBtn.disabled = true;
+            
+            updateStatus('verifying', 'Verifying your identity against registered faces...');
+
+            try {
+                const email = document.getElementById('email').value.trim();
+                
+                const loginData = {
+                    faceEmbeddings: Array.from(faceDescriptor),
+                    email: email || null
+                };
+
+                const response = await fetch('/login_face', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Successful login
+                    const confidencePercent = Math.round(result.similarity_score * 100);
+                    
+                    // Show confidence score
+                    document.getElementById('confidenceScore').textContent = `${confidencePercent}%`;
+                    document.getElementById('loginStats').style.display = 'block';
+                    
+                    updateStatus('success', `Welcome back, ${result.user.name}! Redirecting...`);
+                    showNotification(`✅ ${result.message}`, 'success');
+
+                    // Store user info in session storage for the frontend
+                    sessionStorage.setItem('user', JSON.stringify(result.user));
+                    
+                    // Redirect to dashboard after a short delay
+                    setTimeout(() => {
+                        window.location.href = result.redirect_url || '/dashboard';
+                    }, 2000);
+
+                } else {
+                    // Login failed
+                    const confidencePercent = result.similarity_score ? Math.round(result.similarity_score * 100) : 0;
+                    
+                    if (confidencePercent > 0) {
+                        document.getElementById('confidenceScore').textContent = `${confidencePercent}%`;
+                        document.getElementById('loginStats').style.display = 'block';
+                    }
+                    
+                    updateStatus('error', result.message || 'Face not recognized');
+                    showNotification('❌ ' + (result.message || 'Face recognition failed'), 'error');
+                }
+
+            } catch (error) {
+                console.error('Login verification error:', error);
+                updateStatus('error', 'Connection error during verification');
+                
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showNotification('❌ Connection failed. Please check your internet connection.', 'error');
+                } else {
+                    showNotification('❌ Verification error. Please try again.', 'error');
+                }
+            } finally {
+                // Reset login button
+                loginBtn.innerHTML = '<i class="bi bi-check-lg"></i> Verify & Login';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Helper function to show notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                max-width: 500px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            `;
+
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (video.srcObject) {
+                setTimeout(resizeCanvas, 100);
+            }
+        });
+
+        // Enhanced error handling for camera access
+        function handleCameraError(error) {
+            console.error('Camera access error:', error);
+            
+            if (error.name === 'NotAllowedError') {
+                showNotification('❌ Camera permission denied. Please allow camera access and try again.', 'error');
+                updateStatus('error', 'Camera permission required for face login');
+            } else if (error.name === 'NotFoundError') {
+                showNotification('❌ No camera found. Please connect a camera and try again.', 'error');
+                updateStatus('error', 'No camera device found');
+            } else if (error.name === 'NotReadableError') {
+                showNotification('❌ Camera is already in use by another application.', 'error');
+                updateStatus('error', 'Camera already in use');
+            } else {
+                showNotification('❌ Camera error: ' + error.message, 'error');
+                updateStatus('error', 'Camera access error');
+            }
+
+            startBtn.innerHTML = '<i class="bi bi-camera"></i> Start Face Recognition Login';
+            startBtn.disabled = false;
+        }
+
+        // Initialize face recognition on page load
+        loadModels();
+
+        // Auto-focus email input for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('email').focus();
+        });
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Enter key to start face recognition if email is focused
+            if (e.key === 'Enter' && document.activeElement.id === 'email') {
+                if (!startBtn.disabled) {
+                    startBtn.click();
+                }
+            }
+            
+            // Space bar to capture/login when camera is active
+            if (e.key === ' ' && video.srcObject) {
+                e.preventDefault();
+                if (cameraSection.style.display !== 'none' && !captureDone) {
+                    // Manual capture trigger
+                    if (faceDescriptor) {
+                        captureDone = true;
+                        captureForLogin(100);
+                    }
+                } else if (capturedSection.style.display !== 'none' && !loginBtn.disabled) {
+                    loginBtn.click();
+                }
+            }
+            
+            // Escape key to retry/reset
+            if (e.key === 'Escape') {
+                if (capturedSection.style.display !== 'none') {
+                    retryBtn.click();
+                }
+            }
+        });
+
+        // Add loading animation for better UX
+        function addLoadingAnimation() {
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { opacity: 0.6; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0.6; }
+                }
+                
+                .camera-container.scanning {
+                    animation: pulse 2s infinite;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Initialize loading animations
+        addLoadingAnimation();
+
+        // Add scanning animation when face detection is active
+        function toggleScanningAnimation(active) {
+            const cameraContainer = document.querySelector('.camera-container');
+            if (active) {
+                cameraContainer.classList.add('scanning');
+            } else {
+                cameraContainer.classList.remove('scanning');
+            }
+        }
+
+        // Debug mode for development (can be removed in production)
+        const DEBUG_MODE = false;
+
+        if (DEBUG_MODE) {
+            console.log('Face Recognition Login Debug Mode Enabled');
+            
+            // Add debug info
+            window.debugInfo = {
+                video: video,
+                canvas: canvas,
+                faceDescriptor: () => faceDescriptor,
+                capturedImageData: () => capturedImageData
+            };
+        }
+    </script>
+</body>
+
+</html>
