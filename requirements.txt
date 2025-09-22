@@ -5,3 +5,4 @@ bcrypt
 numpy
 Pillow
 python-dotenv
+gunicorn
